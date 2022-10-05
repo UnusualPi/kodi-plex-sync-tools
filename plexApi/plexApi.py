@@ -27,7 +27,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 from plexapi.server import PlexServer
-from pathlib import PurePath
 import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger()
