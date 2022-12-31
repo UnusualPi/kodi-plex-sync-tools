@@ -17,7 +17,7 @@ class KodiRPC:
         else:
             r.raise_for_status()
 
-    def rpcConstructor(self, method="JSONRPC.Introspect", params={}, id=''):
+    def rpc(self, method="JSONRPC.Introspect", params={}, id=''):
         data={"jsonrpc": "2.0", "method":method, "params":params, "id":id}
         r = requests.post(self.host,
                           headers=self.headers,
@@ -30,25 +30,25 @@ class KodiRPC:
         return r.json()
 
     def getApiDocumentation(self):
-        x = self.rpcConstructor()
+        x = self.rpc()
         return x['result']
 
     def getMovies(self):
         method = 'VideoLibrary.GetMovies'
         params = {'properties': ['playcount', 'file']}
-        r = self.rpcConstructor(method=method, params=params)
+        r = self.rpc(method=method, params=params)
         return r['result']['movies']
 
     def getTvShows(self):
         method = 'VideoLibrary.GetTVShows'
         params = {'properties': ['playcount', 'file']}
-        r = self.rpcConstructor(method=method, params=params)
+        r = self.rpc(method=method, params=params)
         return r['result']['tvshows']
 
     def getTvEpisodes(self):
         method = 'VideoLibrary.GetEpisodes'
         params = {'properties': ['playcount', 'file', 'tvshowid']}
-        r = self.rpcConstructor(method=method, params=params)
+        r = self.rpc(method=method, params=params)
         return r['result']['episodes']
 
     def setWatchedStatus(self, record, watched=True):
@@ -56,10 +56,15 @@ class KodiRPC:
         if 'movieid' in record.keys():
             method = 'VideoLibrary.SetMovieDetails'
             params = {'movieid': record['movieid'], 'playcount':playcount}
-            self.rpcConstructor(method=method, params=params)
+            self.rpc(method=method, params=params)
         elif 'episodeid' in record.keys():
             method = 'VideoLibrary.SetEpisodeDetails'
             params = {'episodeid':record['episodeid'], 'playcount':playcount}
-            self.rpcConstructor(method=method, params=params)
+            self.rpc(method=method, params=params)
         else:
             logger.error('Not a movie or TV episode.')
+
+    def updateVideoLibraray(self):
+        method = 'VideoLibrary.Scan'
+        r = self.rpc(method=method)
+        return r['result']
