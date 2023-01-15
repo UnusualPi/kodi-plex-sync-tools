@@ -1,3 +1,4 @@
 *Config.json
 __pycache__/
 test*
+*.bat
